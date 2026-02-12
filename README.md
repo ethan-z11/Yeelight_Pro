@@ -5,7 +5,10 @@
 
 
 # 安装·Installation
-将yeelight_pro文件夹[(下载Download)](https://github.com/ethan-z11/Yeelight_Pro/archive/refs/heads/main.zip)导入custom_components内，并重启homeassistant
+##### · 将yeelight_pro文件夹[(下载Download)](https://github.com/ethan-z11/Yeelight_Pro/archive/refs/heads/main.zip)导入custom_components内，并重启homeassistant
+
+##### · 或者HACS添加-存储库·integration  ( https://github.com/ethan-z11/Yeelight_Pro )
+##### · 搜索Yeelight_Pro,安装，注意作者ethan_z11。
 
 
 ## 使用

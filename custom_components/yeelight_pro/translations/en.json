@@ -1,0 +1,34 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Yeelight Pro",
+        "description": "{tip}",
+        "data": {
+          "host": "Host",
+          "pid": "Type"
+        }
+      }
+    },
+    "error": {
+      "cannot_access": "Can't access the gateway"
+    },
+    "abort": {
+      "already_configured": "This gateway is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Yeelight Pro",
+        "description": "{tip}",
+        "data": {
+          "host": "Host"
+        }
+      }
+    },
+    "error": {
+      "cannot_access": "Can't access the gateway"
+    }
+  }
+}

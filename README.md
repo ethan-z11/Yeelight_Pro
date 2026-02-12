@@ -5,8 +5,8 @@
 
 
 # 安装·Installation
-将yeelight_pro文件夹导入custom_components内，并重启homeassistant
-[下载Download](https://github.com/ethan-z11/Yeelight_Pro/archive/refs/heads/main.zip)
+将yeelight_pro文件夹[(下载Download)](https://github.com/ethan-z11/Yeelight_Pro/archive/refs/heads/main.zip)导入custom_components内，并重启homeassistant
+
 
 ## 使用
 易来pro app内网关打开局域网控制功能，路由器或易来APP对网关进行静态IP设置，重启完homeassistant后直接输入网关IP地址，自动获取网关内所有设备与实体。

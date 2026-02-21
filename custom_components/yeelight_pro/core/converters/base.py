@@ -144,15 +144,13 @@ class EventConv(Converter):
         elif self.attr in ['panel.click', 'panel.hold', 'panel.release', 'keyClick']:
             key = value.get('key', '')
             cnt = value.get('count', None)
-            btn = f'button{key}'
             if cnt is not None:
-                typ = {1: 'single', 2: 'double', 3: 'triple'}.get(cnt, val)
+                typ = {1: '点击', 2: '双击', 3: '三击'}.get(cnt, val)
             else:
-                typ = val
-            if typ:
-                btn += f'_{typ}'
+                typ = {'click': '点击', 'hold': '长按', 'release': '松开'}.get(val, val)
+            act = f"按键{key}{typ}" if typ else f"按键{key}"
             payload.update({
-                'action': btn,
+                'action': act,
                 'event': self.attr,
                 'button': key,
                 **value,
@@ -171,6 +169,7 @@ class EventConv(Converter):
 
     def encode(self, device: "XDevice", payload: dict, value: dict):
         super().encode(device, payload, value)
+
 
 
 @dataclass

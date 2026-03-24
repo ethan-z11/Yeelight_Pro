@@ -204,7 +204,7 @@ class XLightEntity(XEntity, LightEntity, RestoreEntity):
         if rgb is not None:
             self._attr_rgb_color = rgb
             self._attr_color_mode = ColorMode.RGB
-        elif (self._attr_color_temp_kelvin is not None) or (self._attr_color_temp is not None):
+        elif self._attr_color_temp_kelvin is not None:
             self._attr_color_mode = ColorMode.COLOR_TEMP
         elif self._attr_brightness is not None:
             self._attr_color_mode = ColorMode.BRIGHTNESS

@@ -241,10 +241,6 @@ class XEntity(Entity):
         device.entities[conv.attr] = self
 
     async def async_added_to_hass(self):
-        if hasattr(self, 'async_get_last_state'):
-            state: State = await self.async_get_last_state()
-            if state:
-                self.async_restore_last_state(state.state, state.attributes)
         self.added = True
         await super().async_added_to_hass()
 

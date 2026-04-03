@@ -48,9 +48,17 @@ class XLightEntity(XEntity, LightEntity, RestoreEntity):
 
     def __init__(self, device: XDevice, conv: Converter, option=None):
         super().__init__(device, conv, option)
+        
+        self._attr_color_mode = None
+        self._attr_color_temp = None
+        self._attr_color_temp_kelvin = None
+        self._attr_min_mireds = None
+        self._attr_max_mireds = None
+        self._attr_min_color_temp_kelvin = None
+        self._attr_max_color_temp_kelvin = None
 
         self._attr_supported_color_modes = set()
-        if device.converters.get(ATTR_RGB_COLOR):
+        if device.converters.get(ATTR_RGB_COLOR) or hasattr(device, 'rgb_color'):
             self._attr_supported_color_modes.add(ColorMode.RGB)
         if cov := device.converters.get('color_temp'):
             self._attr_supported_color_modes.add(ColorMode.COLOR_TEMP)

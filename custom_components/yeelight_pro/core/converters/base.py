@@ -16,7 +16,7 @@ __all__ = [
 
 @dataclass
 class Converter:
-    attr: str  
+    attr: str  # hass attribute
     domain: Optional[str] = None 
 
     prop: Optional[str] = None
@@ -100,10 +100,12 @@ class BrightnessConv(PropConv):
 
 @dataclass
 class ColorTempKelvin(PropConv):
+    # 2700..6500 => 370..153
     mink: int = 2700
     maxk: int = 6500
 
     def decode(self, device: "XDevice", payload: dict, value: int):
+        """Convert degrees kelvin to mired shift."""
         payload[self.attr] = int(1000000.0 / value)
         payload['color_temp_kelvin'] = value
 
@@ -144,20 +146,22 @@ class EventConv(Converter):
         elif self.attr in ['panel.click', 'panel.hold', 'panel.release', 'keyClick']:
             key = value.get('key', '')
             cnt = value.get('count', None)
+            btn = f'button{key}'
             if cnt is not None:
-                typ = {1: '点击', 2: '双击', 3: '三击'}.get(cnt, val)
+                typ = {1: 'single', 2: 'double', 3: 'triple'}.get(cnt, val)
             else:
-                typ = {'click': '点击', 'hold': '长按', 'release': '松开'}.get(val, val)
-            act = f"按键{key}{typ}" if typ else f"按键{key}"
+                typ = val
+            if typ:
+                btn += f'_{typ}'
             payload.update({
-                'action': act,
+                'action': btn,
                 'event': self.attr,
                 'button': key,
                 **value,
             })
         elif self.attr in ['knob.spin']:
             keys = ['free_spin', 'hold_spin']
-            keys += [ f"{i}-free_spin" for i in range(1,5)] 
+            keys += [ f"{i}-free_spin" for i in range(1,5)] # For E-Series Knob Support
             for typ in keys:
                 if value.get(typ) in [None, 0]:
                     continue
@@ -171,13 +175,14 @@ class EventConv(Converter):
         super().encode(device, payload, value)
 
 
-
 @dataclass
 class MotorConv(Converter):
     readable: bool = False
 
     def decode(self, device: "XDevice", payload: dict, value: Any):
+        """解码窗帘电机状态"""
         if isinstance(value, dict):
+            # 处理运行状态
             if 'run_state' in value:
                 state = value['run_state']
                 if state == 1:
@@ -187,30 +192,29 @@ class MotorConv(Converter):
                 elif state == 0:
                     payload['run_state'] = 'closed'
             
-            if 'tp' in value:  
+            # 处理位置信息
+            if 'tp' in value:  # target position
                 payload['position'] = value['tp']
-            if 'cp' in value:  
+            if 'cp' in value:  # current position
                 payload['current_position'] = value['cp']
         elif self.readable and value is not None:
             payload[self.attr] = value
 
     def encode(self, device: "XDevice", payload: dict, value: Any):
+        """编码窗帘控制命令"""
         if value == 'stop':
-            super().encode(device, payload, {
-                'action': {
-                    'motorAdjust': {
-                        'type': 0,  
-                    },
-                },
-            })
+            # 暂停命令（协议：action.motorAdjust.type = "pause"）
+            payload['action'] = {'motorAdjust': {'type': 'pause'}}
         elif isinstance(value, int):
+            # 设置位置命令
             super().encode(device, payload, {
-                'tp': value,  
+                'tp': value,  # target position
             })
 
 
 @dataclass  
 class CoverPositionConv(PropConv):
+    """窗帘位置转换器"""
     min: int = 0
     max: int = 100
 
@@ -218,6 +222,7 @@ class CoverPositionConv(PropConv):
         payload[self.attr] = value
 
     def encode(self, device: "XDevice", payload: dict, value: int):
+        # 确保位置在有效范围内
         if value < self.min:
             value = self.min
         elif value > self.max:
@@ -227,7 +232,7 @@ class CoverPositionConv(PropConv):
 
 @dataclass
 class CoverStateConv(PropConv):
-    pass
+    """窗帘状态转换器"""
 
 
 class BathHeaterModeConv(PropConv):

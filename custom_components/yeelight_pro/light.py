@@ -48,7 +48,11 @@ class XLightEntity(XEntity, LightEntity, RestoreEntity):
 
     def __init__(self, device: XDevice, conv: Converter, option=None):
         super().__init__(device, conv, option)
-        
+
+        # 灯实体名称跟随设备名称，而不是 "设备名 light"
+        self._attr_name = self._option.get('name', device.name)
+
+        # Initialize color mode and color temperature attributes to prevent AttributeError
         self._attr_color_mode = None
         self._attr_color_temp = None
         self._attr_color_temp_kelvin = None
@@ -58,6 +62,9 @@ class XLightEntity(XEntity, LightEntity, RestoreEntity):
         self._attr_max_color_temp_kelvin = None
 
         self._attr_supported_color_modes = set()
+        # Ensure RGB color mode is added if the device supports it
+        # This check is enhanced to cover cases where ATTR_RGB_COLOR converter might not be explicitly found,
+        # but the device object itself has an 'rgb_color' attribute or related capability.
         if device.converters.get(ATTR_RGB_COLOR) or hasattr(device, 'rgb_color'):
             self._attr_supported_color_modes.add(ColorMode.RGB)
         if cov := device.converters.get('color_temp'):
